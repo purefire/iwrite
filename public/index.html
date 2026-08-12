@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#111317" />
+  <title>JING.LV — 私人档案</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Newsreader:opsz,wght@6..72,400;6..72,500&family=Noto+Serif+SC:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <div class="noise" aria-hidden="true"></div>
+  <div id="reading-progress" aria-hidden="true"></div>
+  <header class="topbar">
+    <a class="wordmark" id="home-link" href="/" aria-label="Jing Lv 首页">JING<span>.LV</span></a>
+    <nav aria-label="主导航">
+      <a href="#archive" data-home-anchor="archive">归档</a>
+      <button id="admin-button" class="text-button">登录</button>
+    </nav>
+  </header>
+  <main id="top">
+    <section id="archive-view">
+      <div class="archive-layout">
+        <div class="archive-spine">
+          <section class="hero" aria-labelledby="site-title">
+            <p class="eyebrow"><i></i> JING.LV / PERSONAL ARCHIVE</p>
+            <div class="hero-title-block"><h1 id="site-title"><span>JING</span><em>.LV</em></h1><p>个人记录</p></div>
+            <aside class="hero-manuscript" aria-label="个人联系信息">
+              <span>ABOUT / CONTACT</span><strong>Jing Lv</strong>
+              <a href="https://www.linkedin.com/in/jing-lv-21389861/" target="_blank" rel="noopener noreferrer">LinkedIn <i>↗</i></a>
+              <a href="mailto:i@jing.lv">i@jing.lv</a>
+            </aside>
+            <p class="manifesto"><span>诗文</span><span>私记</span><span>技术</span><span>旅途</span></p>
+            <div class="hero-meta"><span>ARCHIVE / 2012 — ∞</span><span id="today"></span></div>
+          </section>
+          <section class="chronicle" aria-labelledby="chronicle-title">
+            <div class="chronicle-head"><span id="chronicle-title">年表</span><span>按年份阅览</span></div>
+            <div id="chronicle" class="chronicle-list" aria-label="按年份筛选文章"></div>
+          </section>
+        </div>
+        <section class="latest" id="archive" aria-labelledby="archive-title">
+          <div class="section-kicker"><span id="archive-title">SELECTED ENTRIES</span><span id="post-count">00 ENTRIES</span></div>
+          <article id="featured-post" class="featured" aria-live="polite"></article>
+          <div class="archive-controls">
+            <p>按主题检索</p>
+            <div class="filters" id="filters" aria-label="文章筛选"></div>
+          </div>
+          <div id="post-list" class="post-list" aria-live="polite"></div>
+        </section>
+      </div>
+    </section>
+
+    <article id="reader-view" class="reader-view" hidden aria-live="polite">
+      <div class="reader-topline">
+        <button id="reader-back" class="back-button" type="button">← 返回归档</button>
+        <span>JING.LV / READING MODE</span>
+      </div>
+      <header class="reader-header">
+        <p id="reader-category" class="post-category"></p>
+        <h1 id="reader-title"></h1>
+        <div class="reader-meta"><span id="reader-date"></span><span id="reader-length"></span><div id="reader-music" class="reader-music" hidden></div><button id="reader-edit" class="reader-edit" type="button" hidden>编辑本文 ↗</button></div>
+      </header>
+      <div class="reader-grid">
+        <aside class="reader-rail" aria-label="阅读信息">
+          <span>ARCHIVE</span>
+          <span id="reader-index">01 / 01</span>
+          <span>SCROLL TO READ</span>
+        </aside>
+        <div id="reader-content" class="reader-content"></div>
+      </div>
+      <nav class="reader-pagination" aria-label="相邻文章">
+        <button id="reader-prev" type="button" class="adjacent-post"></button>
+        <button id="reader-next" type="button" class="adjacent-post"></button>
+      </nav>
+    </article>
+  </main>
+  <footer><span>© <span id="year"></span> JING.LV</span><span>BUILT FOR SLOW READING</span><a id="footer-home" href="/">RETURN ↑</a></footer>
+
+  <dialog id="login-dialog">
+    <form id="login-form" class="dialog-card">
+      <button type="button" class="close" data-close aria-label="关闭">×</button>
+      <p class="section-label">PRIVATE ACCESS</p><h2>进入工作台</h2>
+      <p>仅站点作者可编辑、保存草稿与发布文章。</p>
+      <label>管理员密码<input name="password" type="password" autocomplete="current-password" required autofocus /></label>
+      <p id="login-error" class="error"></p>
+      <button class="solid-button">登录 <span>↗</span></button>
+    </form>
+  </dialog>
+
+  <dialog id="editor-dialog">
+    <form id="editor-form" class="editor-card">
+      <button type="button" class="close" data-close aria-label="关闭">×</button>
+      <div class="editor-head"><div><p class="section-label">WRITING DESK / PRIVATE</p><h2 id="editor-title">新文章</h2></div><button id="logout-button" type="button" class="text-button">退出登录</button></div>
+      <input type="hidden" name="id" /><input type="hidden" name="content" /><input type="hidden" name="contentFormat" value="html" /><input type="hidden" name="backgroundMusicId" />
+      <div class="form-grid">
+        <label>标题<input name="title" required maxlength="160" placeholder="写下标题" /></label>
+        <label>栏目<input name="category" value="短章" maxlength="30" placeholder="例如：短章" /></label>
+        <label>日期<input name="date" type="date" required /></label>
+        <label>摘要 <small>可留空自动生成</small><input name="excerpt" maxlength="260" placeholder="一句话留住文章的入口" /></label>
+      </div>
+      <section class="rich-editor" aria-label="富文本编辑器">
+        <div class="editor-toolbar" role="toolbar" aria-label="文本格式">
+          <button type="button" data-command="undo" title="撤销">↶</button><button type="button" data-command="redo" title="重做">↷</button><i></i>
+          <button type="button" data-command="formatBlock" data-value="h2">H2</button><button type="button" data-command="formatBlock" data-value="h3">H3</button><i></i>
+          <button type="button" data-command="bold"><b>B</b></button><button type="button" data-command="italic"><em>I</em></button><button type="button" data-command="underline"><u>U</u></button><i></i>
+          <button type="button" data-command="insertUnorderedList" title="无序列表">•—</button><button type="button" data-command="insertOrderedList" title="有序列表">1—</button><button type="button" data-command="formatBlock" data-value="blockquote" title="引用">❝</button><button type="button" data-command="formatBlock" data-value="pre" title="代码">&lt;/&gt;</button><i></i>
+          <button type="button" data-command="createLink" title="插入链接">↗</button><button id="insert-image" type="button" title="插入图片">▧</button><button type="button" data-command="removeFormat" title="清除行内格式">Tx</button>
+          <button id="preview-button" type="button" class="preview-button">预览</button>
+        </div>
+        <div id="editor-content" class="editor-content" contenteditable="true" role="textbox" aria-multiline="true" data-placeholder="从这里开始写作…"></div>
+        <div id="editor-preview" class="editor-preview" hidden></div>
+        <div class="editor-status"><span id="editor-word-count">0 字</span><span>支持标题、强调、列表、引用、代码、链接与图片</span></div>
+      </section>
+      <section class="media-desk" aria-label="文章媒体">
+        <input id="image-upload" type="file" accept="image/jpeg,image/png,image/webp,image/gif" multiple hidden />
+        <input id="music-upload" type="file" accept="audio/mpeg,audio/mp3,audio/ogg,audio/wav,.mp3,.ogg,.wav" hidden />
+        <div><p>插图</p><button id="upload-images" type="button" class="text-button">选择图片并插入正文 ↗</button></div>
+        <div><p>文章配乐</p><div><button id="upload-music" type="button" class="text-button">上传 MP3 / 音频 ↗</button><button id="clear-music" type="button" class="clear-media" hidden>移除</button></div><span id="music-status">未设置</span></div>
+      </section>
+      <label class="checkbox"><input name="published" type="checkbox" checked /> 立即公开</label>
+      <p id="editor-error" class="error"></p>
+      <div class="editor-actions"><button id="new-post" type="button" class="text-button">+ 新文章</button><div><button id="delete-post" type="button" class="delete-button" hidden>删除</button><button class="solid-button">保存文章 <span>↗</span></button></div></div>
+    </form>
+  </dialog>
+  <script src="/app.js" defer></script>
+</body>
+</html>

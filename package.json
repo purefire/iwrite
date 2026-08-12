@@ -1,0 +1,17 @@
+{
+  "name": "jing-lv",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "node server.mjs",
+    "check": "node --check server.mjs",
+    "import:wordpress": "node scripts/import-wordpress.mjs https://jing.lv",
+    "db:import-json": "node scripts/import-json-to-mysql.mjs"
+  },
+  "dependencies": {
+    "@google-cloud/storage": "7.22.0",
+    "busboy": "1.6.0",
+    "mysql2": "3.23.3"
+  }
+}
