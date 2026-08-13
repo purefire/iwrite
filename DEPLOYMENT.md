@@ -20,10 +20,11 @@ Node.js / iwrite
   └─ Cloud Storage Bucket → 图片、MP3、OGG、WAV
 ```
 
-MySQL 中由应用启动时自动创建两张表：
+MySQL 中由应用启动时自动创建三张表：
 
 - `posts`：文章、正文、栏目、发布日期、发布状态和配乐关联。
 - `media`：媒体类型、Cloud Storage object name、文件名、MIME 类型和大小。
+- `comments`：文末一行字。访客留言默认 `pending`，审过才为 `published`；`ip_hash` 只用于限频，不对外展示。
 
 `data/posts.json` 只作为迁移源保留，不再是生产数据源。图片和音乐不会写入 Git，也不会写入 MySQL BLOB；MySQL 只保存媒体元数据。
 
@@ -164,6 +165,9 @@ DB_USER=iwrite_app
 DB_PASSWORD="替换为 Cloud SQL 数据库密码"
 DB_SOCKET_PATH=/cloudsql
 GCS_BUCKET=jing-lv-media
+SITE_ORIGIN=https://jing.lv
+# COMMENT_SECRET=可选，独立于管理员密码，用于评论 IP 哈希
+# GEMINI_API_KEY=可选，用于询问档案的生成回答
 ```
 
 设置权限：
@@ -189,12 +193,12 @@ sudo -E -u iwrite npm run db:import-json
 
 导入脚本会：
 
-- 自动创建 `posts` 和 `media` 表；
-- 按文章 ID 插入或更新文章；
-- 保留原文章正文和发布日期；
-- 不会生成旧文章的媒体关联。
+- 自动创建 `posts`、`media` 和 `comments` 表，并为旧库补上 `slug`、评论 `status` 与 `ip_hash` 字段；
+- 按文章 ID 插入或更新文章，保留 HTML 正文、栏目、发布日期和 WordPress 别名；
+- 导入已核准的旧评论（直接标记为 published；新留言默认 pending，审过才展示）；
+- 不会把 WordPress 附件搬进 Cloud Storage。正文里原有的 `jing.lv/wp-content` 图片仍指向现有文件。
 
-该命令可以重复执行，但正式迁移前仍应对 Cloud SQL 做备份。不要在生产环境直接执行 `npm run import:wordpress`，它只更新本地 JSON，不会同步 WordPress 页面或媒体到 MySQL。
+该命令可以重复执行，但正式迁移前仍应对 Cloud SQL 做备份。`npm run import:wordpress` 会从仍在线的 WordPress REST API 重写 `data/posts.json` 和 `data/comments.json`，必须在关掉 WordPress 之前执行。可选环境变量 `GEMINI_API_KEY` 会让「询问档案」在检索原文之后调用 Gemini；不设置时仍可原文检索。`SITE_ORIGIN` 默认 `https://jing.lv`，用于 RSS、sitemap 和分享卡片。访客可在文末留下不超过七十个字的一行，默认进入待审；登录后顶栏「审阅」可收下或放下。频率限制看 Nginx 的 `X-Real-IP`。可选 `COMMENT_SECRET` 用于哈希 IP，不设则沿用 `ADMIN_PASSWORD`。
 
 ## 8. 创建 systemd 应用服务
 
@@ -431,7 +435,7 @@ sudo -u iwrite npm run import:wordpress
 
 这一步会从当前 `https://jing.lv` 的 WordPress REST API 读取文章并更新 `/srv/iwrite/data/posts.json`。因此它必须在切换 Nginx 之前执行。
 
-当前导入脚本会导入文章标题、栏目、日期、摘要和正文；不会自动迁移 WordPress 的图片附件、评论或媒体文件。已有 WordPress 图片如果需要继续保留，需要另行做媒体迁移；新图片和 MP3 可以在 iwrite 写作台中重新上传到 Cloud Storage。
+当前导入脚本会导入文章标题、栏目、日期、摘要、HTML 正文、别名和已核准评论。WordPress 图片若仍在本机 `wp-content` 中，正文会继续引用它们。新图片和 MP3 请在写作台上传到 Cloud Storage。切换 Nginx 后，旧地址 `/blog/年/月/日/别名/`、`/?p=数字`、栏目页、`/sample-page/`、`/feed/` 会由新站点接管。
 
 ### A.5 配置环境变量与数据库迁移
 
@@ -452,6 +456,8 @@ DB_USER=iwrite_app
 DB_PASSWORD="替换为数据库密码"
 DB_SOCKET_PATH=/cloudsql
 GCS_BUCKET=替换为Bucket名称
+SITE_ORIGIN=https://jing.lv
+# COMMENT_SECRET=可选，用于评论 IP 哈希
 ```
 
 VM 本地 MySQL 场景：
@@ -466,6 +472,8 @@ DB_NAME=jinglv
 DB_USER=iwrite_app
 DB_PASSWORD="替换为数据库密码"
 GCS_BUCKET=替换为Bucket名称
+SITE_ORIGIN=https://jing.lv
+# COMMENT_SECRET=可选，用于评论 IP 哈希
 ```
 
 设置权限：

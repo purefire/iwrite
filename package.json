@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "start": "node server.mjs",
-    "check": "node --check server.mjs",
+    "start:json": "ARCHIVE_JSON=1 node server.mjs",
+    "check": "node --check server.mjs && node --check lib/html.mjs && node --check lib/retrieve.mjs && node --check lib/notes.mjs && node --check lib/database.mjs && node --check lib/json-store.mjs && node --check public/app.js && node --check scripts/import-wordpress.mjs && node --check scripts/import-json-to-mysql.mjs && node scripts/check-notes.mjs",
     "import:wordpress": "node scripts/import-wordpress.mjs https://jing.lv",
     "db:import-json": "node scripts/import-json-to-mysql.mjs"
   },

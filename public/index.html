@@ -4,6 +4,9 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="theme-color" content="#111317" />
+  <meta name="description" content="Jing Lv 的私人档案：诗文、私记、技术与旅途。2012 年起。" />
+  <link rel="canonical" href="https://jing.lv/" />
+  <link rel="alternate" type="application/rss+xml" title="JING.LV" href="/feed" />
   <title>JING.LV — 私人档案</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -16,7 +19,10 @@
   <header class="topbar">
     <a class="wordmark" id="home-link" href="/" aria-label="Jing Lv 首页">JING<span>.LV</span></a>
     <nav aria-label="主导航">
+      <button id="command-button" class="text-button" type="button">检索 <kbd>K</kbd></button>
+      <a href="/about" id="about-link">关于</a>
       <a href="#archive" data-home-anchor="archive">归档</a>
+      <button id="review-button" class="text-button" type="button" hidden>审阅</button>
       <button id="admin-button" class="text-button">登录</button>
     </nav>
   </header>
@@ -25,6 +31,7 @@
       <div class="archive-layout">
         <div class="archive-spine">
           <section class="hero" aria-labelledby="site-title">
+            <canvas id="archive-sky" class="archive-sky" aria-hidden="true"></canvas>
             <p class="eyebrow"><i></i> JING.LV / PERSONAL ARCHIVE</p>
             <div class="hero-title-block"><h1 id="site-title"><span>JING</span><em>.LV</em></h1><p>个人记录</p></div>
             <aside class="hero-manuscript" aria-label="个人联系信息">
@@ -60,23 +67,109 @@
       <header class="reader-header">
         <p id="reader-category" class="post-category"></p>
         <h1 id="reader-title"></h1>
-        <div class="reader-meta"><span id="reader-date"></span><span id="reader-length"></span><div id="reader-music" class="reader-music" hidden></div><button id="reader-edit" class="reader-edit" type="button" hidden>编辑本文 ↗</button></div>
+        <div class="reader-meta">
+          <span id="reader-date"></span>
+          <span id="reader-length"></span>
+          <div id="reader-music" class="reader-music" hidden></div>
+          <button id="reader-copy" class="reader-edit" type="button">复制链接</button>
+          <button id="reader-edit" class="reader-edit" type="button" hidden>编辑本文 ↗</button>
+        </div>
       </header>
       <div class="reader-grid">
         <aside class="reader-rail" aria-label="阅读信息">
           <span>ARCHIVE</span>
           <span id="reader-index">01 / 01</span>
+          <nav id="reader-toc" class="reader-toc" hidden aria-label="本文目录"></nav>
           <span>SCROLL TO READ</span>
         </aside>
-        <div id="reader-content" class="reader-content"></div>
+        <div>
+          <div id="reader-content" class="reader-content"></div>
+          <section id="reader-comments" class="reader-comments">
+            <div id="comment-list"></div>
+            <form id="note-form" class="note-form">
+              <div class="section-kicker"><span>LEAVE A LINE</span><span id="note-count">0 / 70</span></div>
+              <p class="note-hint">七十个字以内。审过才会出现。</p>
+              <label class="note-trap" aria-hidden="true">网站<input name="website" tabindex="-1" autocomplete="off"></label>
+              <input type="hidden" name="openedAt" />
+              <div class="note-fields">
+                <label>署名<input name="author" maxlength="16" required autocomplete="nickname" placeholder="怎么称呼" /></label>
+                <label>一行字<textarea name="content" rows="2" required maxlength="140" placeholder="读到这里，留下一句"></textarea></label>
+              </div>
+              <p id="note-error" class="error"></p>
+              <button class="text-button" type="submit">留存</button>
+            </form>
+          </section>
+          <section id="reader-related" class="reader-related" hidden></section>
+        </div>
       </div>
       <nav class="reader-pagination" aria-label="相邻文章">
         <button id="reader-prev" type="button" class="adjacent-post"></button>
         <button id="reader-next" type="button" class="adjacent-post"></button>
       </nav>
     </article>
+
+    <section id="about-view" class="about-view" hidden>
+      <div class="reader-topline">
+        <button id="about-back" class="back-button" type="button">← 返回归档</button>
+        <span>JING.LV / ABOUT</span>
+      </div>
+      <div class="about-copy">
+        <p class="eyebrow"><i></i> PUREFIRE STUDIO</p>
+        <h1>Jing Lv</h1>
+        <p class="about-lead">Stay hungry Stay foolish.</p>
+        <p>幸好不喜宣传，读者寥寥。顺便读读以前的陋作，也颇有趣味。</p>
+        <blockquote>
+          旅行的唯一目的<br>
+          是寻找生活所有的可能性
+        </blockquote>
+        <dl class="about-facts">
+          <div><dt>写信</dt><dd><a href="mailto:i@jing.lv">i@jing.lv</a></dd></div>
+          <div><dt>履历</dt><dd><a href="https://www.linkedin.com/in/jing-lv-21389861/" target="_blank" rel="noopener noreferrer">LinkedIn ↗</a></dd></div>
+        </dl>
+        <p id="about-stats" class="about-stats"></p>
+      </div>
+    </section>
   </main>
-  <footer><span>© <span id="year"></span> JING.LV</span><span>BUILT FOR SLOW READING</span><a id="footer-home" href="/">RETURN ↑</a></footer>
+  <footer>
+    <span>© <span id="year"></span> JING.LV</span>
+    <span>BUILT FOR SLOW READING</span>
+    <a id="footer-home" href="/">RETURN ↑</a>
+  </footer>
+
+  <dialog id="command-dialog" class="command-dialog" aria-label="检索档案">
+    <form id="command-form" method="dialog">
+      <label class="command-label" for="command-input">COMMAND / ARCHIVE</label>
+      <input id="command-input" name="q" autocomplete="off" placeholder="检索标题、年份、栏目，或以问号询问档案…" />
+    </form>
+    <div id="command-results" class="command-results" role="listbox"></div>
+    <p class="command-hint"><span>↑↓ 选择</span><span>Enter 打开</span><span>? 询问档案</span><span>Esc 关闭</span></p>
+  </dialog>
+
+  <aside id="oracle-panel" class="oracle-panel" hidden>
+    <div class="oracle-head">
+      <div>
+        <p class="section-label">ARCHIVE ORACLE</p>
+        <h2>询问档案</h2>
+      </div>
+      <button id="oracle-close" class="close" type="button" aria-label="关闭">×</button>
+    </div>
+    <p class="oracle-note" id="oracle-note">根据已发表文章检索。未配置模型时，直接引用原文段落。</p>
+    <div id="oracle-thread" class="oracle-thread"></div>
+    <form id="oracle-form" class="oracle-form">
+      <input name="question" maxlength="240" placeholder="这本档案里写过什么？" required />
+      <button class="solid-button" type="submit">询问 <span>↗</span></button>
+    </form>
+  </aside>
+
+  <dialog id="review-dialog">
+    <div class="editor-card review-card">
+      <button type="button" class="close" data-close aria-label="关闭">×</button>
+      <p class="section-label">READING DESK / PRIVATE</p>
+      <h2>待审的一行</h2>
+      <p>收下才会出现在文末。放下则不再显示。</p>
+      <div id="review-list" class="review-list"></div>
+    </div>
+  </dialog>
 
   <dialog id="login-dialog">
     <form id="login-form" class="dialog-card">
@@ -93,7 +186,7 @@
     <form id="editor-form" class="editor-card">
       <button type="button" class="close" data-close aria-label="关闭">×</button>
       <div class="editor-head"><div><p class="section-label">WRITING DESK / PRIVATE</p><h2 id="editor-title">新文章</h2></div><button id="logout-button" type="button" class="text-button">退出登录</button></div>
-      <input type="hidden" name="id" /><input type="hidden" name="content" /><input type="hidden" name="contentFormat" value="html" /><input type="hidden" name="backgroundMusicId" />
+      <input type="hidden" name="id" /><input type="hidden" name="slug" /><input type="hidden" name="content" /><input type="hidden" name="contentFormat" value="html" /><input type="hidden" name="backgroundMusicId" />
       <div class="form-grid">
         <label>标题<input name="title" required maxlength="160" placeholder="写下标题" /></label>
         <label>栏目<input name="category" value="短章" maxlength="30" placeholder="例如：短章" /></label>
